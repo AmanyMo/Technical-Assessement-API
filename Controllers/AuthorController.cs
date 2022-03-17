@@ -143,5 +143,19 @@ namespace Technical_Assessement_API.Controllers
         {
             return _context.Author.Any(e => e.ID == id);
         }
+
+
+        //return Author's books
+        //get : api/Author/AuthorsBooksNames
+        [HttpGet]
+        public ActionResult<IEnumerable<string>> AuthorsBooksNames(int id)
+        {
+            IEnumerable<AuthorsBooks> Authors_Books = _context.AuthorsBooks.Where(i => i.AuthorID == id);
+            //List<Book> list_books = _context.Book.Where(i => i.ID );
+            IEnumerable<int>books=Authors_Books.Select(i => i.BookID);
+            IEnumerable<String> BooksNames = _context.Book.Select(i => i.Title);
+
+            return  BooksNames.ToList() ;
+        }
     }
 }

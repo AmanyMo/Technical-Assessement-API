@@ -100,9 +100,23 @@ namespace Technical_Assessement_API.Controllers
             return NoContent();
         }
 
+        //Get: api/Books/Authorofabook
+        [HttpGet]
+        public async Task<IEnumerable<string>> GetAuthorNameOfABook(int id)
+        {
+            //    IEnumerable<AuthorsBooks> authorsBooks  = _context.AuthorsBooks.Where(i => i.BookID == id);
+            //    //_context.Author.Select(i=>i.Name).Include(authorsBooks.)
+            //   IEnumerable<string> AuthorsNames= authorsBooks.Where(i=>i.BookID==id).Select(i=>i.Author.Name)
+
+             IEnumerable<string> AuthorsNames =await  _context.AuthorsBooks.Where(i => i.BookID == id).Select(i => i.Author.Name).ToListAsync();
+
+             return AuthorsNames ;
+        }
+
         private bool BookExists(int id)
         {
             return _context.Book.Any(e => e.ID == id);
         }
+
     }
 }

@@ -7,16 +7,17 @@ using Technical_Assessement_API.Models;
 
 namespace Technical_Assessement_API.Data
 {
-    public class ApiContext :DbContext
+    public class ApiContext : DbContext
     {
-        public ApiContext(DbContextOptions<ApiContext>options):base(options)
+        public ApiContext(DbContextOptions<ApiContext> options) : base(options)
 
         {
 
         }
 
-        public DbSet<Author>Author { get; set; }
+        public DbSet<Author> Author { get; set; }
         public DbSet<Book> Book { get; set; }
+        public DbSet<AuthorsBooks> AuthorsBooks{get;set;}
 
         protected override void OnModelCreating(ModelBuilder modelbuilder)
         {
