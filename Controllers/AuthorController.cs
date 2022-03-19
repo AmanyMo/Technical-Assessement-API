@@ -83,25 +83,25 @@ namespace Technical_Assessement_API.Controllers
         [HttpPost]
         public async Task<ActionResult<Author>> PostAuthor(Author author)
         {
-
+            
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-
             //Model is valid
             else
             {
-                //to add img first:add it to wwwroot file to save in server then save its name to db
-                //  to add it to wwwroot :it's a static file & to get path use webhostenvironment interface 
+                //to add img first:add it to (file) like wwwroot file on mvc core to save in server then save its name to db
+                //  to add it to Static file(IMAges)wwwroot :it's a static file & to get path use webhostenvironment interface 
                 //---to deal with webhostenvironment  interface should inject it and register in DI---
                 //first: catch file(img)from request form cus files route on form request
                 //second: get path of www
-                //third: copy this file to a file streaam which save it in wwwroot
+                //third: copy this file to a file streaam which save it in wwwroot(Images)
+
+                //-----------------------------------------------------
 
                 //var files = HttpContext.Request.Form.Files;
                 //string webRootPath = _webHostEnvironment.WebRootPath;
-
                 ////creating
 
                 //string upload = webRootPath + WebConstant.ImgPathAuthor;
@@ -113,8 +113,9 @@ namespace Technical_Assessement_API.Controllers
                 //    //add img to wwwroot
                 //    files[0].CopyTo(filestream);
                 //}
-                ////add product to db
-                //author.Image = filename + extension;
+                //add product to db
+                ///author.Image = filename + extension;
+                //------------------------------------------------------------
                 _context.Author.Add(author);
 
                 await _context.SaveChangesAsync();
@@ -145,17 +146,18 @@ namespace Technical_Assessement_API.Controllers
         }
 
 
-        //return Author's books
-        //get : api/Author/AuthorsBooksNames
+       /// return Author's books
+       // get : api/Author/AuthorsBooksNames
         [HttpGet]
-        public ActionResult<IEnumerable<string>> AuthorsBooksNames(int id)
+        [Route("GetBooksNamesofanAuthor")]
+        public ActionResult<IEnumerable<string>> GetBooksNamesofanAuthor(int id)
         {
             IEnumerable<AuthorsBooks> Authors_Books = _context.AuthorsBooks.Where(i => i.AuthorID == id);
             //List<Book> list_books = _context.Book.Where(i => i.ID );
-            IEnumerable<int>books=Authors_Books.Select(i => i.BookID);
+            IEnumerable<int> books = Authors_Books.Select(i => i.BookID);
             IEnumerable<String> BooksNames = _context.Book.Select(i => i.Title);
 
-            return  BooksNames.ToList() ;
+            return BooksNames.ToList();
         }
     }
 }

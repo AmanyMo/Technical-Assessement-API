@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 
 namespace Technical_Assessement_API.Models
 {
@@ -22,6 +24,9 @@ namespace Technical_Assessement_API.Models
         public string Bio { get; set; }
 
         public string Image { get; set; }
+
+        [NotMapped]
+        public List<int> Booksid { get; set; }
 
         public virtual ICollection<AuthorsBooks> AuthorsBooks { get; set; }
     }

@@ -47,12 +47,26 @@ namespace Technical_Assessement_API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBook(int id, Book book)
         {
-            if (id != book.ID)
+            if (id != book.ID || !ModelState.IsValid)
             {
                 return BadRequest();
             }
+            else
+            {
+               List< AuthorsBooks> authorsBooks = _context.AuthorsBooks.Where(a=>a.BookID==book.ID).ToList();
 
-            _context.Entry(book).State = EntityState.Modified;
+               
+                for (int i = 0; i < authorsBooks.Count(); i++)
+                {
+                    authorsBooks[i].BookID = book.ID;
+                    authorsBooks[i].AuthorID = book.Authorsid[i];
+                    
+                }
+
+                _context.Book.Add(book);
+
+
+                _context.Entry(book).State = EntityState.Modified;
 
             try
             {
@@ -71,6 +85,9 @@ namespace Technical_Assessement_API.Controllers
             }
 
             return NoContent();
+
+            }
+
         }
 
         // POST: api/Books
@@ -78,10 +95,29 @@ namespace Technical_Assessement_API.Controllers
         [HttpPost]
         public async Task<ActionResult<Book>> PostBook(Book book)
         {
-            _context.Book.Add(book);
-            await _context.SaveChangesAsync();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                AuthorsBooks authorsBooks = new AuthorsBooks();
+                
+                List<int> au = book.Authorsid.ToList();
+                for (int i = 0; i < au.Count ; i++)
+                {
+                    authorsBooks.BookID = book.ID;
+                    authorsBooks.AuthorID = au[i];
+                    _context.AuthorsBooks.Add(authorsBooks);
 
-            return CreatedAtAction("GetBook", new { id = book.ID }, book);
+                }
+
+                _context.Book.Add(book);
+
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetBook", new { id = book.ID }, book);
+            }
         }
 
         // DELETE: api/Books/5
@@ -102,17 +138,25 @@ namespace Technical_Assessement_API.Controllers
 
         //Get: api/Books/Authorofabook
         [HttpGet]
+        [Route("GetAuthorNameOfABook")]
         public async Task<IEnumerable<string>> GetAuthorNameOfABook(int id)
         {
             //    IEnumerable<AuthorsBooks> authorsBooks  = _context.AuthorsBooks.Where(i => i.BookID == id);
             //    //_context.Author.Select(i=>i.Name).Include(authorsBooks.)
             //   IEnumerable<string> AuthorsNames= authorsBooks.Where(i=>i.BookID==id).Select(i=>i.Author.Name)
 
-             IEnumerable<string> AuthorsNames =await  _context.AuthorsBooks.Where(i => i.BookID == id).Select(i => i.Author.Name).ToListAsync();
+            //IEnumerable<string> AuthorsNames = await _context.AuthorsBooks.Where(i => i.BookID == id).Select(i => i.Author.Name).ToListAsync();
+            return await _context.AuthorsBooks.Where(i => i.BookID == id).Select(i => i.Author.Name).ToListAsync();
 
-             return AuthorsNames ;
+            // return AuthorsNames;
         }
+        [HttpGet]
+        [Route("GetAllAuthorsName")]
+        public async Task<IEnumerable<string>> GetAllAuthorsName()
+        {
 
+            return await _context.Author.Select(n=>n.Name).ToListAsync();
+        }
         private bool BookExists(int id)
         {
             return _context.Book.Any(e => e.ID == id);
